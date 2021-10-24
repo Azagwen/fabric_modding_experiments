@@ -1,0 +1,35 @@
+{
+    "schemaVersion": 1,
+    "id": "aza_mod_exp",
+    "version": "${version}",
+
+    "name": "Mod_exepriments",
+    "description": "a mod that adds random things as experiments",
+    "authors": [
+        "Azagwen"
+    ],
+    "contact": {},
+
+    "license": "MIT",
+    "icon": "assets/aza_mod_exp/icon.png",
+
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            "azagwen.aza_mod_exp.client.ClientInit"
+        ],
+        "main": [
+            "azagwen.aza_mod_exp.MainInit"
+        ]
+    },
+
+    "mixins": [
+        "aza_mod_exp.mixins.json"
+    ],
+
+    "depends": {
+        "fabricloader": ">=0.12.2",
+        "fabric": "*",
+        "minecraft": "1.17.1"
+    }
+}
