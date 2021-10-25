@@ -24,22 +24,19 @@ public class StairifierItem extends Item {
         var player = context.getPlayer();
         var hitSide = context.getSide();
         var hitPosVec3f = context.getHitPos();
+        var hitBlock = world.getBlockState(pos).getBlock();
 
-        for (var entry : MainInit.BLOCKS_TO_STAIRS_MAP.entrySet()) {
-            var stairState = entry.getValue().getDefaultState();
-            var block = entry.getKey();
-            var hitState = world.getBlockState(pos);
+        if (MainInit.BLOCK_TO_STAIRS_MAP.containsKey(hitBlock)) {
+            var stairState = MainInit.BLOCK_TO_STAIRS_MAP.get(hitBlock).getDefaultState();
+            var facing = hitSide.getAxis() == Direction.Axis.Y ? player.getHorizontalFacing() : hitSide.getOpposite();
+            var half = Utilities.getHitHalf(hitSide, hitPosVec3f, pos, player.isSneaking(), BlockHalf.BOTTOM, BlockHalf.TOP);
+            var soundGroup = stairState.getSoundGroup();
 
-            if (hitState.getBlock() == block && hitState.getBlock() != stairState.getBlock()) {
-                var facing = hitSide.getAxis() == Direction.Axis.Y ? player.getHorizontalFacing() : hitSide.getOpposite();
-                var half = Utilities.getHitHalf(hitSide, hitPosVec3f, pos, player.isSneaking(), BlockHalf.BOTTOM, BlockHalf.TOP);
-
-                world.setBlockState(pos, stairState.with(StairsBlock.FACING, facing).with(StairsBlock.HALF, half));
-                world.updateListeners(pos, block.getDefaultState(), stairState, 8);
-                world.playSound(player, pos, SoundEvents.ENTITY_CHICKEN_EGG, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                return ActionResult.success(world.isClient);
-            }
+            world.setBlockState(pos, stairState.with(StairsBlock.FACING, facing).with(StairsBlock.HALF, half));
+            world.playSound(player, pos, soundGroup.getPlaceSound(), SoundCategory.BLOCKS, (soundGroup.getVolume() + 1.0F) / 2.0F, soundGroup.getPitch() * 0.8F);
+            return ActionResult.success(world.isClient);
         }
+
         return ActionResult.PASS;
     }
 }
