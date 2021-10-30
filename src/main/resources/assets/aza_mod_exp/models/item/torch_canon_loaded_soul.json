@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "aza_mod_exp:item/torch_canon_loaded_soul"
+    }
+}

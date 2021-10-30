@@ -5,12 +5,13 @@ import azagwen.aza_mod_exp.Utilities;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,10 +33,15 @@ public class SlabifierItem extends Item {
         var hitSide = context.getSide();
         var hitPosVec3f = context.getHitPos();
         var hitBlock = world.getBlockState(pos).getBlock();
+        var stack = player.getStackInHand(context.getHand());
 
         if (blockToSlabMap.containsKey(hitBlock)) {
             var slabState = blockToSlabMap.get(hitBlock).getDefaultState();
             var type = Utilities.getHitHalf(hitSide, hitPosVec3f, pos, player.isSneaking(), SlabType.BOTTOM, SlabType.TOP);
+
+            stack.damage(1, (LivingEntity) player, (playerx) -> {
+                playerx.sendToolBreakStatus(playerx.getActiveHand());
+            });
 
             world.setBlockState(pos, slabState.with(SlabBlock.TYPE, type));
             this.playConversionSounds(world, player, pos, slabState);
@@ -46,6 +52,10 @@ public class SlabifierItem extends Item {
                 if (hitBlock == entry.getValue()) {
                     var slabState = blockToSlabMap.get(entry.getKey()).getDefaultState();
                     var type = world.getBlockState(pos).get(StairsBlock.HALF) == BlockHalf.BOTTOM ? SlabType.BOTTOM : SlabType.TOP;
+
+                    stack.damage(1, (LivingEntity) player, (playerx) -> {
+                        playerx.sendToolBreakStatus(playerx.getActiveHand());
+                    });
 
                     world.setBlockState(pos, slabState.with(SlabBlock.TYPE, type));
                     this.playConversionSounds(world, player, pos, slabState);

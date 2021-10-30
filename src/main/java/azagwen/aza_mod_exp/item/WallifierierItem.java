@@ -2,26 +2,23 @@ package azagwen.aza_mod_exp.item;
 
 import azagwen.aza_mod_exp.MainInit;
 import net.minecraft.block.*;
-import net.minecraft.block.enums.WallShape;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.Map;
 
-public class WallierItem extends Item {
+public class WallifierierItem extends Item {
 
-    public WallierItem(Settings settings) {
+    public WallifierierItem(Settings settings) {
         super(settings);
     }
 
@@ -47,6 +44,11 @@ public class WallierItem extends Item {
     private void convert(World world, BlockPos pos, Block hitBlock, PlayerEntity player, ItemUsageContext context, Map<Block, ? extends Block> map) {
         var wallState = map.get(hitBlock).getDefaultState();
         var wallBlockItem = (BlockItem) wallState.getBlock().asItem();
+        var stack = player.getStackInHand(context.getHand());
+
+        stack.damage(1, (LivingEntity) player, (playerx) -> {
+            playerx.sendToolBreakStatus(playerx.getActiveHand());
+        });
 
         world.removeBlock(pos, false);
         wallBlockItem.place(new ItemPlacementContext(player, context.getHand(), context.getStack(), new BlockHitResult(context.getHitPos(), context.getSide(), pos, false)));

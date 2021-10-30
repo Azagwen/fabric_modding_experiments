@@ -1,0 +1,26 @@
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "aza_mod_exp:item/torch_canon"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "aza_mod_exp:torch_type": 0.001
+            },
+            "model": "aza_mod_exp:item/torch_canon_loaded"
+        },
+        {
+            "predicate": {
+                "aza_mod_exp:torch_type": 0.002
+            },
+            "model": "aza_mod_exp:item/torch_canon_loaded_soul"
+        },
+        {
+            "predicate": {
+                "aza_mod_exp:torch_type": 0.003
+            },
+            "model": "aza_mod_exp:item/torch_canon_loaded_redstone"
+        }
+    ]
+}

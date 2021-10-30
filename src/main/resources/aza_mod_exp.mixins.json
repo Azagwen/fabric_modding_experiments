@@ -3,11 +3,8 @@
     "minVersion": "0.8",
     "package": "azagwen.aza_mod_exp.mixin",
     "compatibilityLevel": "JAVA_16",
-    "mixins": [
-        "MixinStairsBlock"
-    ],
-    "client": [
-    ],
+    "mixins": [],
+    "client": [],
     "injectors": {
         "defaultRequire": 1
     }

@@ -1,6 +1,6 @@
 package azagwen.aza_mod_exp;
 
-import azagwen.aza_mod_exp.item.Items;
+import azagwen.aza_mod_exp.item.AzaItems;
 import com.google.common.collect.Maps;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -27,7 +27,8 @@ public class MainInit implements ModInitializer {
         return new Identifier("aza_mod_exp", path);
     }
 
-    public <B> void populateBlockToBlock(RecipeManager recipeManager, String type, Map<Block, B> btbMap, Function<BlockItem, Boolean> condition) {
+    @SuppressWarnings("unchecked")
+    public <B> void populateConversionMap(RecipeManager recipeManager, String type, Map<Block, B> conversionMap, Function<BlockItem, Boolean> condition) {
         for (var key : recipeManager.keys().toList()) { //Loop through every single loaded recipe
             var recipe = recipeManager.get(key).get();
 
@@ -40,25 +41,24 @@ public class MainInit implements ModInitializer {
                     for (var stack : ingredient.getMatchingStacks()) {  //Loop through all the stacks in each ingredient
                         if (stack.getItem() instanceof BlockItem blockItem) { //Check if the current stack is a block-item
                             var block = Registry.BLOCK.get(Registry.ITEM.getId(blockItem));
-                            btbMap.put(block, (B) resultBlockItem.getBlock()); //All the previous conditions have been confirmed, add the blocks to their respective map
+                            conversionMap.put(block, (B) resultBlockItem.getBlock()); //All the previous conditions have been confirmed, add the blocks to their respective map
                         }
                     }
                 }
             }
         }
 
-        LOGGER.info("Successfully populated " + btbMap.size() + " Block-to-" + type + " operations");
+        LOGGER.info("Successfully populated " + conversionMap.size() + " Block-to-" + type + " operations");
     }
 
     @Override
     public void onInitialize() {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            LOGGER.info("Successfully populated " + BLOCK_TO_STAIRS_MAP.size() + " Block-to-Stairs operations"); //Technically false, this is done at the stairs Init, but still good info.
-
-            this.populateBlockToBlock(server.getRecipeManager(), "Wall", BLOCK_TO_SLAB_MAP, (blockItem) -> blockItem.getBlock() instanceof SlabBlock);
-            this.populateBlockToBlock(server.getRecipeManager(), "Wall", BLOCK_TO_WALL_MAP, (blockItem) -> blockItem.getBlock() instanceof WallBlock);
-            this.populateBlockToBlock(server.getRecipeManager(), "Fence", BLOCK_TO_FENCE_MAP, (blockItem) -> blockItem.getBlock() instanceof FenceBlock);
+            this.populateConversionMap(server.getRecipeManager(), "Stairs", BLOCK_TO_STAIRS_MAP, (blockItem) -> blockItem.getBlock() instanceof StairsBlock);
+            this.populateConversionMap(server.getRecipeManager(), "Slab", BLOCK_TO_SLAB_MAP, (blockItem) -> blockItem.getBlock() instanceof SlabBlock);
+            this.populateConversionMap(server.getRecipeManager(), "Wall", BLOCK_TO_WALL_MAP, (blockItem) -> blockItem.getBlock() instanceof WallBlock);
+            this.populateConversionMap(server.getRecipeManager(), "Fence", BLOCK_TO_FENCE_MAP, (blockItem) -> blockItem.getBlock() instanceof FenceBlock);
         });
-        Items.registerAll();
+        AzaItems.registerAll();
     }
 }

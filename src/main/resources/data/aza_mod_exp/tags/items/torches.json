@@ -1,0 +1,9 @@
+{
+  "__comment": "Should only contain torches (but you can put anything you want in here really)",
+  "replace": false,
+  "values": [
+    "minecraft:torch",
+    "minecraft:soul_torch",
+    "minecraft:redstone_torch"
+  ]
+}
