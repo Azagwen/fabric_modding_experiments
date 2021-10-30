@@ -17,8 +17,6 @@ public class ThrownTorchEntity extends ThrownItemEntity {
         super(entityType, world);
     }
 
-
-
     public ThrownTorchEntity(World world, Item torchType, LivingEntity player) {
         super(AzaEntityTypes.THROWN_TORCH, player, world);
         this.torchType = torchType;
@@ -29,8 +27,12 @@ public class ThrownTorchEntity extends ThrownItemEntity {
         return Items.TORCH;
     }
 
-    private void setTorchType(Item torchType) {
+    public void setTorchType(Item torchType) {
         this.torchType = torchType;
+    }
+
+    public Item getTorchType() {
+        return this.torchType;
     }
 
     @Override

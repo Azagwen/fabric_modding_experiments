@@ -4,10 +4,7 @@ import azagwen.aza_mod_exp.MainInit;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -35,6 +32,7 @@ public class WallifierierItem extends Item {
         }
         else if (MainInit.BLOCK_TO_FENCE_MAP.containsKey(hitBlock)) {
             this.convert(world, pos, hitBlock, player, context, MainInit.BLOCK_TO_FENCE_MAP);
+
             return ActionResult.success(world.isClient);
         }
 
@@ -45,12 +43,11 @@ public class WallifierierItem extends Item {
         var wallState = map.get(hitBlock).getDefaultState();
         var wallBlockItem = (BlockItem) wallState.getBlock().asItem();
         var stack = player.getStackInHand(context.getHand());
+        var place = wallBlockItem.place(new ItemPlacementContext(player, context.getHand(), new ItemStack(wallBlockItem), new BlockHitResult(context.getHitPos(), context.getSide(), pos, false)));
 
-        stack.damage(1, (LivingEntity) player, (playerx) -> {
-            playerx.sendToolBreakStatus(playerx.getActiveHand());
-        });
-
-        world.removeBlock(pos, false);
-        wallBlockItem.place(new ItemPlacementContext(player, context.getHand(), context.getStack(), new BlockHitResult(context.getHitPos(), context.getSide(), pos, false)));
+        if (place != ActionResult.FAIL) {
+            world.removeBlock(pos, false);
+            stack.damage(1, (LivingEntity) player, (playerx) -> playerx.sendToolBreakStatus(playerx.getActiveHand()));
+        }
     }
 }

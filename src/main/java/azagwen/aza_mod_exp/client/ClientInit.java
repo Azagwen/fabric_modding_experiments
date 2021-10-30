@@ -1,6 +1,7 @@
 package azagwen.aza_mod_exp.client;
 
 import azagwen.aza_mod_exp.MainInit;
+import azagwen.aza_mod_exp.client.render.ThrownTorchEntityRenderer;
 import azagwen.aza_mod_exp.entity.AzaEntityTypes;
 import azagwen.aza_mod_exp.item.AzaItems;
 import azagwen.aza_mod_exp.item.TorchCanonItem;
@@ -19,14 +20,30 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class ClientInit implements ClientModInitializer {
 
+    public static class SimpleAnimUpdater {
+        public double value;
+        private long lastUpdateTime;
+
+        SimpleAnimUpdater() {
+        }
+
+        public boolean shouldUpdate(long time) {
+            return this.lastUpdateTime != time;
+        }
+
+        public void update(long time, double value) {
+            this.lastUpdateTime = time;
+            this.value = value;
+        }
+    }
+
     @Override
     public void onInitializeClient() {
-        EntityRendererRegistry.INSTANCE.register(AzaEntityTypes.THROWN_TORCH, FlyingItemEntityRenderer::new);
+        EntityRendererRegistry.INSTANCE.register(AzaEntityTypes.THROWN_TORCH, ThrownTorchEntityRenderer::new);
 
         FabricModelPredicateProviderRegistry.register(AzaItems.TORCH_CANON, MainInit.id("torch_type"), new UnclampedModelPredicateProvider() {
             private final SimpleAnimUpdater animUpdater = new SimpleAnimUpdater();
@@ -69,22 +86,5 @@ public class ClientInit implements ClientModInitializer {
                 }
             }
         });
-    }
-
-    public static class SimpleAnimUpdater {
-        public double value;
-        private long lastUpdateTime;
-
-        SimpleAnimUpdater() {
-        }
-
-        public boolean shouldUpdate(long time) {
-            return this.lastUpdateTime != time;
-        }
-
-        public void update(long time, double value) {
-            this.lastUpdateTime = time;
-            this.value = value;
-        }
     }
 }
